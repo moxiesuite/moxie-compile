@@ -1,6 +1,6 @@
 var fs = require("fs");
 var path = require("path");
-var solc = require("solc");
+var solc = require("@vapory/solc");
 var Compile = require("../index");
 var assert = require("assert");
 
@@ -81,7 +81,7 @@ describe("Compile", function() {
       })
     });
 
-    // Ported from `truffle-solidity-utils`
+    // Ported from `moxie-solidity-utils`
     it("orders the ABI of a contract without functions", function(){
       var sources = {};
       sources["ComplexOrdered.sol"] = complexOrderedSource;

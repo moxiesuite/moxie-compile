@@ -6,9 +6,9 @@ var fs = require("fs");
 var async = require("async");
 var Profiler = require("./profiler");
 var CompileError = require("./compileerror");
-var expect = require("truffle-expect");
-var find_contracts = require("truffle-contract-sources");
-var Config = require("truffle-config");
+var expect = require("moxie-expect");
+var find_contracts = require("moxie-contract-sources");
+var Config = require("moxie-config");
 var debug = require("debug")("compile");
 
 // Most basic of the compile commands. Takes a hash of sources, where
@@ -37,7 +37,7 @@ var compile = function(sources, options, callback) {
   ]);
 
   // Load solc module only when compilation is actually required.
-  var solc = require("solc");
+  var solc = require("@vapory/solc");
   // Clean up after solc.
   var listeners = process.listeners("uncaughtException");
   var solc_listener = listeners[listeners.length - 1];
@@ -82,10 +82,10 @@ var compile = function(sources, options, callback) {
           ],
           "*": [
             "abi",
-            "evm.bytecode.object",
-            "evm.bytecode.sourceMap",
-            "evm.deployedBytecode.object",
-            "evm.deployedBytecode.sourceMap"
+            "vvm.bytecode.object",
+            "vvm.bytecode.sourceMap",
+            "vvm.deployedBytecode.object",
+            "vvm.deployedBytecode.sourceMap"
           ]
         },
       }
@@ -155,14 +155,14 @@ var compile = function(sources, options, callback) {
         contract_name: contract_name,
         sourcePath: originalPathMappings[source_path], // Save original source path, not modified ones
         source: operatingSystemIndependentSources[source_path],
-        sourceMap: contract.evm.bytecode.sourceMap,
-        deployedSourceMap: contract.evm.deployedBytecode.sourceMap,
+        sourceMap: contract.vvm.bytecode.sourceMap,
+        deployedSourceMap: contract.vvm.deployedBytecode.sourceMap,
         legacyAST: standardOutput.sources[source_path].legacyAST,
         ast: standardOutput.sources[source_path].ast,
         abi: contract.abi,
-        bytecode: "0x" + contract.evm.bytecode.object,
-        deployedBytecode: "0x" + contract.evm.deployedBytecode.object,
-        unlinked_binary: "0x" + contract.evm.bytecode.object, // deprecated
+        bytecode: "0x" + contract.vvm.bytecode.object,
+        deployedBytecode: "0x" + contract.vvm.deployedBytecode.object,
+        unlinked_binary: "0x" + contract.vvm.bytecode.object, // deprecated
         compiler: {
           "name": "solc",
           "version": solc.version()
@@ -176,8 +176,8 @@ var compile = function(sources, options, callback) {
       // Go through the link references and replace them with older-style
       // identifiers. We'll do this until we're ready to making a breaking
       // change to this code.
-      Object.keys(contract.evm.bytecode.linkReferences).forEach(function(file_name) {
-        var fileLinks = contract.evm.bytecode.linkReferences[file_name];
+      Object.keys(contract.vvm.bytecode.linkReferences).forEach(function(file_name) {
+        var fileLinks = contract.vvm.bytecode.linkReferences[file_name];
 
         Object.keys(fileLinks).forEach(function(library_name) {
           var linkReferences = fileLinks[library_name] || [];
@@ -188,8 +188,8 @@ var compile = function(sources, options, callback) {
       });
 
       // Now for the deployed bytecode
-      Object.keys(contract.evm.deployedBytecode.linkReferences).forEach(function(file_name) {
-        var fileLinks = contract.evm.deployedBytecode.linkReferences[file_name];
+      Object.keys(contract.vvm.deployedBytecode.linkReferences).forEach(function(file_name) {
+        var fileLinks = contract.vvm.deployedBytecode.linkReferences[file_name];
 
         Object.keys(fileLinks).forEach(function(library_name) {
           var linkReferences = fileLinks[library_name] || [];

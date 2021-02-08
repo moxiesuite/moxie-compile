@@ -1,8 +1,8 @@
 var colors = require("colors");
-var TruffleError = require("truffle-error");
+var MoxieError = require("moxie-error");
 var inherits = require("util").inherits;
 
-inherits(CompileError, TruffleError);
+inherits(CompileError, MoxieError);
 
 function CompileError(message) {
   // Note we trim() because solc likes to add extra whitespace.

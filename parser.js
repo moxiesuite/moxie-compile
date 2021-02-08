@@ -1,5 +1,5 @@
 var CompileError = require("./compileerror");
-var solc = require("solc");
+var solc = require("@vapory/solc");
 var fs = require("fs");
 var path = require("path");
 
@@ -23,13 +23,13 @@ module.exports = {
     // have source for them (an empty file).
 
     var build_remappings = function() {
-      // Maps import paths to paths from EthPM installed contracts, so we can correctly solve imports
+      // Maps import paths to paths from VapPM installed contracts, so we can correctly solve imports
       // e.g. "my_pkg/=installed_contracts/my_pkg/contracts/"
       var remappings = [];
 
-      if (fs.existsSync('ethpm.json')) {
-        ethpm = JSON.parse(fs.readFileSync('ethpm.json'));
-        for (pkg in ethpm.dependencies) {
+      if (fs.existsSync('vappm.json')) {
+        vappm = JSON.parse(fs.readFileSync('vappm.json'));
+        for (pkg in vappm.dependencies) {
           remappings.push(pkg + "/=" + path.join(installedContractsDir, pkg, 'contracts', '/'));
         }
       }
@@ -110,10 +110,10 @@ module.exports = {
     // the imports speedily without doing extra work.
 
     // Helper to detect import errors with an easy regex.
-    var importErrorKey = "TRUFFLE_IMPORT";
+    var importErrorKey = "MOXIE_IMPORT";
 
     // Inject failing import.
-    var failingImportFileName = "__Truffle__NotFound.sol";
+    var failingImportFileName = "__Moxie__NotFound.sol";
 
     body = body + "\n\nimport '" + failingImportFileName + "';\n";
 
@@ -136,7 +136,7 @@ module.exports = {
     var output = solc.compileStandard(JSON.stringify(solcStandardInput), function() {
       // The existence of this function ensures we get a parsable error message.
       // Without this, we'll get an error message we *can* detect, but the key will make it easier.
-      // Note: This is not a normal callback. See docs here: https://github.com/ethereum/solc-js#from-version-021
+      // Note: This is not a normal callback. See docs here: https://github.com/vaporyco/solc-js#from-version-021
       return {error: importErrorKey};
     });
 
